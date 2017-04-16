@@ -315,11 +315,18 @@ class PlanningGraph():
 
         self.a_levels.append(set())
         for action in self.all_actions:
+            subset = False
             new_PgNode_a = PgNode_a(action)
-            for s_node in self.s_levels[level]:
-                if s_node in new_PgNode_a.prenodes:
+            for s_node in new_PgNode_a.prenodes:
+                if s_node not in self.s_levels[level]:
+                    subset = False
+                    break
+                else:
+                    subset = True
                     new_PgNode_a.parents.add(s_node)
-                    self.a_levels[level].add(new_PgNode_a)
+                    s_node.children.add(new_PgNode_a)
+            if subset:
+                self.a_levels[level].add(new_PgNode_a)
 
     def add_literal_level(self, level):
         ''' add an S (literal) level to the Planning Graph
